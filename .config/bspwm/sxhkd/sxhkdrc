@@ -1,0 +1,119 @@
+# make sxhkd reload its configuration files
+super + Escape
+  pkill -USR1 -x sxhkd
+
+# quit or restart bspwm
+super + shift + {q,r}
+  bspc {quit,wm -r}
+
+# create a new terminal window or swap the current one to the biggest one in the screen
+super + {_,shift + }Return
+  {alacritty, bspc node -s biggest.local}
+
+# close or kill a window
+super + {_,shift + }BackSpace
+  bspc node -{c,k}
+
+# change the window state
+super + alt + {t, shift + t, f, shift + f}
+  bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
+
+# preselect the direction
+ctrl + shift + {Left,Down,Up,Right}
+	bspc node -p {west,south,north,east}
+
+ctrl + shift + {h,j,k,l}
+  bspc node -p {west,south,north,east}
+
+# preselect the ratio
+ctrl + shift + {1-9}
+	bspc node -o 0.{1-9}
+
+# cancel preselect
+ctrl + shift + Escape
+	bspc node -p cancel
+
+# resize windows
+super + r : {Left,Down,Up,Right,e}
+  n=10; \
+  { d1=left;   d2=right;  dx=-$n; dy=0;   \
+  , d1=bottom; d2=top;    dx=0;   dy=$n;  \
+  , d1=top;    d2=bottom; dx=0;   dy=-$n; \
+  , d1=right;  d2=left;   dx=$n;  dy=0;   \
+  , xdotool key Escape; \
+  } \
+  bspc node --resize $d1 $dx $dy || bspc node --resize $d2 $dx $dy
+
+super + r : {h,j,k,l,e}
+  n=10; \
+  { d1=left;   d2=right;  dx=-$n; dy=0;   \
+  , d1=bottom; d2=top;    dx=0;   dy=$n;  \
+  , d1=top;    d2=bottom; dx=0;   dy=-$n; \
+  , d1=right;  d2=left;   dx=$n;  dy=0;   \
+  , xdotool key Escape; \
+  } \
+  bspc node --resize $d1 $dx $dy || bspc node --resize $d2 $dx $dy
+
+# focus or send a window to the given desktop
+super + {_,shift + }{1-9,0}
+  bspc {desktop -f,node -d} '^{1-9,10}'
+
+super + alt + {_,shift + }{1,2,3,4,5}
+	bspc {desktop -f, node -d} '^{6,7,8,9,10}'
+
+# cycle monitors
+super + bracket{left,right}
+	bspc monitor -f {prev,next}
+
+super + alt + {Left,Down,h,j}
+  bspc monitor -f prev
+
+super + alt + {Right,Up,l,k}
+  bspc monitor -f next
+
+# cycle desktops
+super + {Left,Down,h,j}
+	bspc desktop -f prev
+
+super + {Right,Up,l,k}
+  bspc desktop -f next
+
+super + shift + {Left,Down,h,j}
+	bspc node -d prev && bspc desktop -f prev
+
+super + shift + {Right,Up,l,k}
+  bspc node -d next && bspc desktop -f next
+
+super + shift + ctrl + {Left,Down,h,j}
+	bspc node -d prev
+
+super + shift + ctrl + {Right,Up,l,k}
+  bspc node -d next
+
+# cycle nodes
+super + ctrl + {Left,Down,Up,Right}
+	bspc node -f {west,south,north,east}
+
+super + ctrl + {h,j,k,l}
+  bspc node -f {west,south,north,east}
+
+# apps
+super + {b, f, ctrl + f, e, shift + e, p, m, n, s, x, alt + space, space}
+	{firefox, thunar, alacritty -e ranger, alacritty -e nvim, geany, color-gpick, spotify, networkmanager_dmenu, ~/.config/rofi/bin/screenshot, ~/.config/rofi/bin/powermenu, ~/.config/rofi/bin/launcher, ~/.config/rofi/bin/runner}
+
+# volume control
+ctrl + alt + {equal,minus}
+	pamixer {-i,-d} 5
+
+ctrl + alt + {Left,Down,Up,Right,h,j,k,l,space}
+	playerctl -p spotify {previous,previous,next,next,previous,previous,next,next,play-pause}
+
+XF86AudioRaiseVolume
+	pamixer -i 5
+
+XF86AudioLowerVolume
+	pamixer -d 5
+
+XF86AudioMute
+	pamixer -t 
+
